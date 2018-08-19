@@ -15,13 +15,13 @@ impl Storage {
         for i in &self.items {
             items_str.push(i.to_string());
         }
-        Ok(["[", &*items_str.join(","), "]"].join(""))
+        Ok(["[", &*items_str.join(", "), "]"].join(""))
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::Storage;
 
     #[test]
     fn test_render() {
@@ -35,6 +35,6 @@ mod tests {
         let mut storage = Storage::new();
         storage.items.push(1);
         storage.items.push(2);
-        assert_eq!(storage.render().unwrap(), "[1,2]");
+        assert_eq!(storage.render().unwrap(), "[1, 2]");
     }
 }

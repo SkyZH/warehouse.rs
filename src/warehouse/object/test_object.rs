@@ -1,6 +1,6 @@
-use warehouse::object::Object;
-use warehouse::object::Location;
+use warehouse::object::{ Object, Location };
 use warehouse::Storage;
+use std::sync::{ Arc, Mutex };
 
 pub struct TestObject {
     location: Location,
@@ -9,12 +9,12 @@ pub struct TestObject {
 }
 
 impl TestObject {
-    fn new() -> Self {
-        Self {
+    pub fn new() -> Arc<Mutex<Self>> {
+        Arc::new(Mutex::new(Self {
             location: Location { x: 0, y: 0, z: 0 },
             locked: false,
             storage: Storage::new()
-        }
+        }))
     }
 }
 
@@ -34,23 +34,8 @@ impl Object for TestObject {
     fn get_location(&mut self) -> &mut Location {
         &mut self.location
     }
-    fn lock(&mut self) -> Result<(), &'static str> {
-        match self.locked {
-            true => Err("already locked"),
-            false => {
-                self.locked = true;
-                Ok(())
-            }
-        }
-    }
-    fn unlock(&mut self) -> Result<(), &'static str> {
-        match self.locked {
-            false => Err("already unlocked"),
-            true => {
-                self.locked = false;
-                Ok(())
-            }
-        } 
+    fn get_lock(&mut self) -> &mut bool {
+        &mut self.locked
     }
 }
 
@@ -61,37 +46,43 @@ mod tests {
     #[test]
     fn test_id() {
         let obj = TestObject::new();
+        let obj = obj.lock().unwrap();
         assert_eq!(obj.id(), "test-0");
     }
     #[test]
     fn test_storage() {
-        let mut obj = TestObject::new();
-        let mut storage = obj.get_storage();
+        let obj = TestObject::new();
+        let mut obj = obj.lock().unwrap();
+        let storage = obj.get_storage();
         storage.items.push(1);
     }
     #[test]
     fn test_location() {
-        let mut obj = TestObject::new();
-        let mut location = obj.get_location();
+        let obj = TestObject::new();
+        let mut obj = obj.lock().unwrap();
+        let location = obj.get_location();
         location.x = 233;
     }
     #[test]
-    #[should_panic]
+     #[should_panic(expected="object already locked")]
     fn test_lock() {
-        let mut obj = TestObject::new();
+        let obj = TestObject::new();
+        let mut obj = obj.lock().unwrap();
         obj.lock().unwrap();
         obj.lock().unwrap();
         
     }
     #[test]
-    #[should_panic]
+    #[should_panic(expected="object already unlocked")]
     fn test_unlock() {
-        let mut obj = TestObject::new();
+        let obj = TestObject::new();
+        let mut obj = obj.lock().unwrap();
         obj.unlock().unwrap();
     }
     #[test]
     fn test_lock_and_unlock() {
-        let mut obj = TestObject::new();
+        let obj = TestObject::new();
+        let mut obj = obj.lock().unwrap();
         obj.lock().unwrap();
         assert!(obj.locked);
         obj.unlock().unwrap();
@@ -99,7 +90,8 @@ mod tests {
     }
     #[test]
     fn test_render() {
-        let mut obj = TestObject::new();
+        let obj = TestObject::new();
+        let mut obj = obj.lock().unwrap();
         {
             let storage = obj.get_storage();
             storage.items.push(233);
@@ -110,5 +102,4 @@ mod tests {
         }
         assert_eq!(obj.render().unwrap(), "{ id: \"test-0\", storage: [233], x: 233, y: 234, z: 235 }");
     }
-    
 }

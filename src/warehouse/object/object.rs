@@ -13,8 +13,27 @@ pub trait Object {
     fn location(&self) -> &Location;
     fn get_storage(&mut self) -> &mut Storage;
     fn get_location(&mut self) -> &mut Location;
-    fn lock(&mut self) -> Result<(), &'static str>;
-    fn unlock(&mut self) -> Result<(), &'static str>;
+    fn get_lock(&mut self) -> &mut bool;
+    fn lock(&mut self) -> Result<(), &'static str> {
+        let locked = self.get_lock();
+        match *locked {
+            true => Err("object already locked"),
+            false => {
+                *locked = true;
+                Ok(())
+            }
+        }
+    }
+    fn unlock(&mut self) -> Result<(), &'static str> {
+        let locked = self.get_lock();
+        match *locked {
+            false => Err("object already unlocked"),
+            true => {
+                *locked = false;
+                Ok(())
+            }
+        } 
+    }
     fn render(&self) -> Result<String, &'static str> {
         let storage = self.storage().render();
         match storage {
@@ -29,3 +48,4 @@ pub trait Object {
         }
     }
 }
+

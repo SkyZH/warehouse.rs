@@ -1,5 +1,4 @@
-use warehouse::command::Command;
-use warehouse::command::CommandQueue;
+use warehouse::command::{ Command, CommandQueue };
 
 pub struct ParallelCommandQueue {
     queue: Vec<Box<Command>>
