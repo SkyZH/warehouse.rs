@@ -5,7 +5,7 @@ pub struct ParallelCommandQueue {
     queue: Vec<Box<Command>>
 }
 
-impl  ParallelCommandQueue {
+impl ParallelCommandQueue {
     pub fn new() -> Self {
         Self {
             queue: Vec::new()

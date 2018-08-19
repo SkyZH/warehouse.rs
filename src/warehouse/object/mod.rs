@@ -2,8 +2,11 @@ mod bot;
 mod shelf;
 mod site;
 mod object;
+mod test_object;
 
-use self::bot::Bot;
-use self::shelf::Shelf;
-use self::site::Site;
-use self::object::Object;
+pub use self::bot::Bot;
+pub use self::shelf::Shelf;
+pub use self::site::Site;
+pub use self::object::Object;
+pub use self::test_object::TestObject;
+pub use self::object::Location;
