@@ -7,6 +7,12 @@ pub struct Location {
     pub z: u32
 }
 
+impl Location {
+    pub fn nearby(&self, target: Location) -> bool {
+        (self.x as i64 - target.x as i64).abs() + (self.y as i64 - target.y as i64).abs() + (self.z as i64 - target.z as i64).abs() <= 1
+    }
+}
+
 pub trait Object {
     fn id(&self) -> &str;
     fn storage(&self) -> &Storage;

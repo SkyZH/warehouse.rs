@@ -36,11 +36,24 @@ impl Command for TransferCommand {
     fn initialize(&mut self) -> Result<(), &'static str> {
         let mut from = self.from.lock().unwrap();
         let mut to = self.to.lock().unwrap();
+        if to.storage().items.len() > 0 {
+            return Err("target storage not empty");
+        }
+        if !to.location().nearby(*from.location()) {
+            return Err("source and target are far away");
+        }
         match from.lock() {
             Ok(_) => {},
             Err(err) => return Err(err)
         };
-        to.lock()
+        match to.lock() {
+            Ok(_) => {},
+            Err(err) => {
+                from.unlock().unwrap();
+                return Err(err);
+            }
+        };
+        Ok(())
     }
     fn consume(&mut self) -> Result<bool, &'static str> {
         let mut from = self.from.lock().unwrap();
@@ -102,7 +115,6 @@ mod tests {
             let (mut bot, mut obj) = (bot.lock().unwrap(), obj.lock().unwrap());
             let (bot_storage, obj_storage) = (bot.get_storage(), obj.get_storage());
             bot_storage.items.push(1); bot_storage.items.push(3);
-            obj_storage.items.push(2);
         }
         let mut cmd = BotTransferToCommand::new(bot.clone(), obj.clone());
         cmd.initialize().unwrap();
@@ -110,8 +122,38 @@ mod tests {
         {
             let (bot, obj) = (bot.lock().unwrap(), obj.lock().unwrap());
             let (bot_storage, obj_storage) = (bot.storage(), obj.storage());
-            assert_eq!(bot_storage.items, vec![2]);
+            assert_eq!(bot_storage.items, vec![]);
             assert_eq!(obj_storage.items, vec![1, 3]);
         }
+    }
+    #[test]
+    #[should_panic(expected="target storage not empty")]
+    fn test_storage_full() {
+        let bot = Bot::new();
+        let obj = TestObject::new();
+        {
+            let (mut bot, mut obj) = (bot.lock().unwrap(), obj.lock().unwrap());
+            let (bot_storage, obj_storage) = (bot.get_storage(), obj.get_storage());
+            bot_storage.items.push(1); bot_storage.items.push(3);
+            obj_storage.items.push(2);
+        }
+        let mut cmd = BotTransferToCommand::new(bot.clone(), obj.clone());
+        cmd.initialize().unwrap();
+        cmd.consume().unwrap();
+    }
+    #[test]
+    #[should_panic(expected="source and target are far away")]
+    fn test_far_away() {
+        let bot = Bot::new();
+        let obj = TestObject::new();
+        {
+            let (mut bot, mut obj) = (bot.lock().unwrap(), obj.lock().unwrap());
+            let (bot_loc, obj_loc) = (bot.get_location(), obj.get_location());
+            bot_loc.x = 2; bot_loc.y = 2; bot_loc.z = 2;
+            obj_loc.x = 1; obj_loc.y = 3; obj_loc.z = 2;
+        }
+        let mut cmd = BotTransferToCommand::new(bot.clone(), obj.clone());
+        cmd.initialize().unwrap();
+        cmd.consume().unwrap();
     }
 }
