@@ -48,6 +48,23 @@ impl World {
         (*self.is_available.get_mut(&to_location).unwrap()) += 1;
         Ok(())
     }
+    pub fn render(&self) -> Result<String, &'static str> {
+        let mut error_flag: Option<&'static str> = None;
+        let result = self.items.iter()
+            .map(|object: &Arc<Mutex<Object>>| match object.lock().unwrap().render() {
+                Ok(result) => result,
+                Err(err) => {
+                    error_flag = Some(err);
+                    "".to_owned()
+                }
+            })
+            .collect::<Vec<String>>()
+            .join(", ");
+        match error_flag {
+            Some(err) => Err(err),
+            None => Ok(format!("{{ objects: [{}] }}", result))
+        }
+    }
 }
 
 #[cfg(test)]
@@ -75,9 +92,24 @@ mod tests {
     }
     #[test]
     #[should_panic]
+    fn test_notify_move_panic() {
+        let mut world = World::new();
+        let bot = Bot::new();
+        world.notify_will_move(bot, Location::new(1, 1, 1)).unwrap();
+    }
+    #[test]
     fn test_notify_move() {
         let mut world = World::new();
-        let mut bot = Bot::new();
+        let bot = Bot::new();
+        world.add_items(vec![bot.clone() as Arc<Mutex<Object>>]);
         world.notify_will_move(bot, Location::new(1, 1, 1)).unwrap();
+        assert_eq!(*world.is_available.get(&Location::new(1, 1, 1)).unwrap(), 1);
+    }
+    #[test]
+    fn test_render() {
+        let mut world = World::new();
+        let bot = Bot::new();
+        world.add_items(vec![bot.clone() as Arc<Mutex<Object>>]);
+        assert_eq!(world.render().unwrap(), format!("{{ objects: [{{ id: \"{}\", storage: [], location: {{ x: 0, y: 0, z: 0 }} }}] }}", bot.lock().unwrap().id()));
     }
 }

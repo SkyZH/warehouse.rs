@@ -41,10 +41,7 @@ impl Command for TransferCommand {
         if !to.location().nearby(*from.location()) {
             return Err("source and target are far away");
         }
-        match from.lock() {
-            Ok(_) => {},
-            Err(err) => return Err(err)
-        };
+        from.lock()?;
         match to.lock() {
             Ok(_) => {},
             Err(err) => {

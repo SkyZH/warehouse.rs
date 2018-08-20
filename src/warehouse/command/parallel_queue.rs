@@ -49,11 +49,21 @@ impl Command for ParallelCommandQueue {
         Ok(self.queue.len() > 0)
     }
     fn render(&self) -> Result<String, &'static str> {
+        let mut error_flag: Option<&'static str> = None;
         let result = self.queue.iter()
-            .map(|command: &Box<Command>| command.render().unwrap())
+            .map(|command: &Box<Command>| match command.render() {
+                Ok(result) => result,
+                Err(err) => {
+                    error_flag = Some(err);
+                    "".to_owned()
+                }
+            })
             .collect::<Vec<String>>()
             .join(", ");
-        Ok(format!("{{ type: \"parallel_queue\", commands: [{}] }}", result))
+        match error_flag {
+            Some(err) => Err(err),
+            None => Ok(format!("{{ type: \"parallel_queue\", commands: [{}] }}", result))
+        }
     }
 }
 

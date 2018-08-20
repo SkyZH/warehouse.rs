@@ -5,21 +5,6 @@
     "tasks": [
         {
             "type": "cargo",
-            "label": "cargo build",
-            "command": "cargo",
-            "args": [
-                "build"
-            ],
-            "problemMatcher": [
-                "$rustc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        },
-        {
-            "type": "cargo",
             "label": "cargo test",
             "command": "cargo",
             "args": [
@@ -30,6 +15,21 @@
             ],
             "group": {
                 "kind": "test",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "cargo",
+            "label": "cargo run",
+            "command": "cargo",
+            "args": [
+                "run"
+            ],
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": {
+                "kind": "build",
                 "isDefault": true
             }
         }
