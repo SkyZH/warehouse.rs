@@ -1,6 +1,5 @@
 use warehouse::command::Command;
 use warehouse::object::{ Object, Bot };
-use warehouse::Storage;
 use std::sync::{ Arc, Mutex };
 use std::mem::swap;
 
@@ -113,8 +112,8 @@ mod tests {
         let obj = TestObject::new();
         {
             let (mut bot, mut obj) = (bot.lock().unwrap(), obj.lock().unwrap());
-            let (bot_storage, obj_storage) = (bot.get_storage(), obj.get_storage());
-            bot_storage.add(1, 1); bot_storage.add(3, 3);
+            let (bot_storage, _obj_storage) = (bot.get_storage(), obj.get_storage());
+            bot_storage.add(1, 1).unwrap(); bot_storage.add(3, 3).unwrap();
         }
         let mut cmd = BotTransferToCommand::new(bot.clone(), obj.clone());
         cmd.initialize().unwrap();
@@ -134,8 +133,8 @@ mod tests {
         {
             let (mut bot, mut obj) = (bot.lock().unwrap(), obj.lock().unwrap());
             let (bot_storage, obj_storage) = (bot.get_storage(), obj.get_storage());
-            bot_storage.add(1, 1); bot_storage.add(3, 1);
-            obj_storage.add(2, 1);
+            bot_storage.add(1, 1).unwrap(); bot_storage.add(3, 1).unwrap();
+            obj_storage.add(2, 1).unwrap();
         }
         let mut cmd = BotTransferToCommand::new(bot.clone(), obj.clone());
         cmd.initialize().unwrap();

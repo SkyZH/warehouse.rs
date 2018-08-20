@@ -54,7 +54,7 @@ mod tests {
         let obj = TestObject::new();
         let mut obj = obj.lock().unwrap();
         let storage = obj.get_storage();
-        storage.add(1, 1);
+        storage.add(1, 1).unwrap();
     }
     #[test]
     fn test_location() {
@@ -94,7 +94,7 @@ mod tests {
         let mut obj = obj.lock().unwrap();
         {
             let storage = obj.get_storage();
-            storage.add(233, 1);
+            storage.add(233, 1).unwrap();
         }
         {
             let location = obj.get_location();
