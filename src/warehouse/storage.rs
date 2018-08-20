@@ -1,5 +1,5 @@
 type Item = u64;
-
+type ItemSet = (Item, u32);
 pub struct Storage {
     pub items: Vec<(Item, u32)>
 }
@@ -11,14 +11,11 @@ impl Storage {
         }
     }
     pub fn render(&self) -> Result<String, &'static str> {
-        let mut items_str = Vec::new() as Vec<String>;
-        for i in &self.items {
-            items_str.push([
-                "{ item: ", &*i.0.to_string(), ", ",
-                "count: ", &*i.1.to_string(), " }"
-            ].join(""));
-        }
-        Ok(["[", &*items_str.join(", "), "]"].join(""))
+        let result = self.items.iter()
+            .map(|set: &ItemSet| format!("{{ item: {}, count: {} }}", set.0, set.1))
+            .collect::<Vec<String>>()
+            .join(", ");
+        Ok(format!("[{}]", result))
     }
     pub fn items(&self) -> &Vec<(Item, u32)> {
         &self.items

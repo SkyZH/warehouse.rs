@@ -32,6 +32,9 @@ impl Command for ParallelCommandQueue {
         });
         Ok(self.queue.len() > 0)
     }
+    fn render(&self) -> Result<String, &'static str> {
+        Err("not implemented")
+    }
 }
 
 impl CommandQueue for ParallelCommandQueue {

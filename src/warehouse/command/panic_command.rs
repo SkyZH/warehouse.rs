@@ -16,6 +16,9 @@ impl Command for PanicCommand {
     fn consume(&mut self) -> Result<bool, &'static str> {
         Err("panic command consumed")
     }
+    fn render(&self) -> Result<String, &'static str> {
+        Ok("{ type: \"panic\" }".to_owned())
+    }
 }
 
 pub struct ConsumePanicCommand {
@@ -33,6 +36,9 @@ impl Command for ConsumePanicCommand {
     }
     fn consume(&mut self) -> Result<bool, &'static str> {
         Err("consume panic command consumed")
+    }
+    fn render(&self) -> Result<String, &'static str> {
+        Ok("{ type: \"panicconsume\" }".to_owned())
     }
 }
 

@@ -30,6 +30,9 @@ impl Command for TestCommand {
         (*self.data.lock().unwrap()).consumed = true;
         Ok(false)
     }
+    fn render(&self) -> Result<String, &'static str> {
+        Ok("{ type: \"test\" }".to_owned())
+    }
 }
 
 pub struct TestNextCommand {
@@ -47,6 +50,9 @@ impl Command for TestNextCommand {
     }
     fn consume(&mut self) -> Result<bool, &'static str> {
         Ok(true)
+    }
+    fn render(&self) -> Result<String, &'static str> {
+        Ok("{ type: \"testnext\" }".to_owned())
     }
 }
 
