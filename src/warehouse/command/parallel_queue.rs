@@ -12,6 +12,22 @@ impl ParallelCommandQueue {
     }
 }
 
+impl CommandQueue for ParallelCommandQueue {
+    fn schedule(&mut self, command: Box<Command>) -> Result<(), &'static str> {
+        let mut command = command;
+        match command.initialize() {
+            Ok(_) => {
+                self.queue.push(command);
+                Ok(())
+            },
+            Err(err) => Err(err)
+        }
+    }
+    fn commands(&self) -> &Vec<Box<Command>> {
+        &self.queue
+    }
+}
+
 impl Command for ParallelCommandQueue {
     fn initialize(&mut self) -> Result<(), &'static str> {
         Ok(())
@@ -33,20 +49,11 @@ impl Command for ParallelCommandQueue {
         Ok(self.queue.len() > 0)
     }
     fn render(&self) -> Result<String, &'static str> {
-        Err("not implemented")
-    }
-}
-
-impl CommandQueue for ParallelCommandQueue {
-    fn schedule(&mut self, command: Box<Command>) -> Result<(), &'static str> {
-        let mut command = command;
-        match command.initialize() {
-            Ok(_) => {
-                self.queue.push(command);
-                Ok(())
-            },
-            Err(err) => Err(err)
-        }
+        let result = self.queue.iter()
+            .map(|command: &Box<Command>| command.render().unwrap())
+            .collect::<Vec<String>>()
+            .join(", ");
+        Ok(format!("[{}]", result))
     }
 }
 
@@ -142,5 +149,14 @@ mod tests {
         queue.schedule(Box::new(TestNextCommand::new())).unwrap();
         queue.consume().unwrap();
         assert!(queue.queue.len() == 1);
-    } 
+    }
+
+    #[test]
+    fn test_render() {
+        let mut queue = ParallelCommandQueue::new();
+        queue.initialize().unwrap();
+        queue.schedule(Box::new(TestNextCommand::new())).unwrap();
+        queue.schedule(Box::new(TestNextCommand::new())).unwrap();
+        assert_eq!(queue.render().unwrap(), "[{ type: \"testnext\" }, { type: \"testnext\" }]");
+    }
 }
