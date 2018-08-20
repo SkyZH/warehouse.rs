@@ -53,7 +53,7 @@ impl Command for ParallelCommandQueue {
             .map(|command: &Box<Command>| command.render().unwrap())
             .collect::<Vec<String>>()
             .join(", ");
-        Ok(format!("[{}]", result))
+        Ok(format!("{{ type: \"parallel_queue\", commands: [{}] }}", result))
     }
 }
 
@@ -157,6 +157,6 @@ mod tests {
         queue.initialize().unwrap();
         queue.schedule(Box::new(TestNextCommand::new())).unwrap();
         queue.schedule(Box::new(TestNextCommand::new())).unwrap();
-        assert_eq!(queue.render().unwrap(), "[{ type: \"testnext\" }, { type: \"testnext\" }]");
+        assert_eq!(queue.render().unwrap(), "{ type: \"parallel_queue\", commands: [{ type: \"testnext\" }, { type: \"testnext\" }] }");
     }
 }

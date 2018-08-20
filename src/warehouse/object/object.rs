@@ -1,17 +1,5 @@
 use warehouse::Storage;
-
-#[derive(Clone, Copy, Default)]
-pub struct Location {
-    pub x: u32,
-    pub y: u32,
-    pub z: u32
-}
-
-impl Location {
-    pub fn nearby(&self, target: Location) -> bool {
-        (self.x as i64 - target.x as i64).abs() + (self.y as i64 - target.y as i64).abs() + (self.z as i64 - target.z as i64).abs() <= 1
-    }
-}
+use warehouse::object::Location;
 
 pub trait Object {
     fn id(&self) -> &str;
@@ -41,17 +29,12 @@ pub trait Object {
         } 
     }
     fn render(&self) -> Result<String, &'static str> {
-        let storage = self.storage().render();
-        match storage {
-            Ok(storage) => Ok([
-                "{ id: \"", self.id(), "\", ",
-                "storage: ", &*storage, ", ",
-                "x: ", &*self.location().x.to_string(), ", ",
-                "y: ", &*self.location().y.to_string(), ", ",
-                "z: ", &*self.location().z.to_string(), " }"
-            ].join("")),
+        match self.storage().render() {
+            Ok(storage) => Ok(format!("{{ id: \"{}\", storage: {}, location: {} }}", 
+                            self.id(),
+                            storage,
+                            self.location().render())),
             Err(err) => Err(err)
         }
     }
 }
-

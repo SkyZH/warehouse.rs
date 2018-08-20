@@ -2,7 +2,6 @@ extern crate uuid;
 
 use warehouse::object::{ Object, Location };
 use warehouse::Storage;
-use warehouse::command::Command;
 use std::sync::{ Arc, Mutex };
 use self::uuid::Uuid;
 
