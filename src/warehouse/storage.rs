@@ -1,7 +1,7 @@
 type Item = u64;
 
 pub struct Storage {
-    pub items: Vec<Item>
+    pub items: Vec<(Item, u32)>
 }
 
 impl Storage {
@@ -13,9 +13,18 @@ impl Storage {
     pub fn render(&self) -> Result<String, &'static str> {
         let mut items_str = Vec::new() as Vec<String>;
         for i in &self.items {
-            items_str.push(i.to_string());
+            items_str.push([
+                "{ item: ", &*i.0.to_string(), ", ",
+                "count: ", &*i.1.to_string(), " }"
+            ].join(""));
         }
         Ok(["[", &*items_str.join(", "), "]"].join(""))
+    }
+    pub fn items(&self) -> &Vec<(Item, u32)> {
+        &self.items
+    }
+    pub fn add(&mut self, item: Item, count: u32) {
+        self.items.push((item, count));
     }
 }
 
@@ -26,15 +35,15 @@ mod tests {
     #[test]
     fn test_render() {
         let mut storage = Storage::new();
-        storage.items.push(1);
-        assert_eq!(storage.render().unwrap(), "[1]");
+        storage.add(1, 1);
+        assert_eq!(storage.render().unwrap(), "[{ item: 1, count: 1 }]");
     }
 
     #[test]
     fn test_render_multiple() {
         let mut storage = Storage::new();
-        storage.items.push(1);
-        storage.items.push(2);
-        assert_eq!(storage.render().unwrap(), "[1, 2]");
+        storage.add(1, 1);
+        storage.add(2, 2);
+        assert_eq!(storage.render().unwrap(), "[{ item: 1, count: 1 }, { item: 2, count: 2 }]");
     }
 }

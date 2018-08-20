@@ -114,7 +114,7 @@ mod tests {
         {
             let (mut bot, mut obj) = (bot.lock().unwrap(), obj.lock().unwrap());
             let (bot_storage, obj_storage) = (bot.get_storage(), obj.get_storage());
-            bot_storage.items.push(1); bot_storage.items.push(3);
+            bot_storage.add(1, 1); bot_storage.add(3, 3);
         }
         let mut cmd = BotTransferToCommand::new(bot.clone(), obj.clone());
         cmd.initialize().unwrap();
@@ -123,7 +123,7 @@ mod tests {
             let (bot, obj) = (bot.lock().unwrap(), obj.lock().unwrap());
             let (bot_storage, obj_storage) = (bot.storage(), obj.storage());
             assert_eq!(bot_storage.items, vec![]);
-            assert_eq!(obj_storage.items, vec![1, 3]);
+            assert_eq!(obj_storage.items, vec![(1, 1), (3, 3)]);
         }
     }
     #[test]
@@ -134,8 +134,8 @@ mod tests {
         {
             let (mut bot, mut obj) = (bot.lock().unwrap(), obj.lock().unwrap());
             let (bot_storage, obj_storage) = (bot.get_storage(), obj.get_storage());
-            bot_storage.items.push(1); bot_storage.items.push(3);
-            obj_storage.items.push(2);
+            bot_storage.add(1, 1); bot_storage.add(3, 1);
+            obj_storage.add(2, 1);
         }
         let mut cmd = BotTransferToCommand::new(bot.clone(), obj.clone());
         cmd.initialize().unwrap();

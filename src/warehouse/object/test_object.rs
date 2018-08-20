@@ -54,7 +54,7 @@ mod tests {
         let obj = TestObject::new();
         let mut obj = obj.lock().unwrap();
         let storage = obj.get_storage();
-        storage.items.push(1);
+        storage.add(1, 1);
     }
     #[test]
     fn test_location() {
@@ -94,12 +94,12 @@ mod tests {
         let mut obj = obj.lock().unwrap();
         {
             let storage = obj.get_storage();
-            storage.items.push(233);
+            storage.add(233, 1);
         }
         {
             let location = obj.get_location();
             location.x = 233; location.y = 234; location.z = 235;
         }
-        assert_eq!(obj.render().unwrap(), "{ id: \"test-0\", storage: [233], x: 233, y: 234, z: 235 }");
+        assert_eq!(obj.render().unwrap(), "{ id: \"test-0\", storage: [{ item: 233, count: 1 }], x: 233, y: 234, z: 235 }");
     }
 }
