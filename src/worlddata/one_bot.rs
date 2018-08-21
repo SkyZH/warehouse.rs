@@ -1,6 +1,6 @@
 use warehouse::World;
 use warehouse::object::{ Bot, Shelf, Site, Location, Object };
-use worlddata::util::move_location;
+use worlddata::util::{ move_location, map_as_object };
 use std::sync::{ Arc, Mutex };
 
 pub fn one_bot() -> (World, 
@@ -11,7 +11,6 @@ pub fn one_bot() -> (World,
     let (MARGIN_L, MARGIN_T) = (1, 1);
     let mut world = World::new();
     let mut vec_shelf : Vec<Arc<Mutex<Shelf>>> = Vec::new();
-    let mut vec_bot : Vec<Arc<Mutex<Bot>>> = Vec::new();
     let mut vec_site : Vec<Arc<Mutex<Site>>> = Vec::new();
     for cnt in 0..SHELF_COUNT {
         for col in 0..2 {
@@ -23,10 +22,14 @@ pub fn one_bot() -> (World,
                 }
             }
         }
+        let mut site = Site::new();
+        move_location(site.clone(), Location::new(cnt * 3 + 1 + MARGIN_L, MARGIN_T + SHELF_WIDTH + 1, 0));
+        vec_site.push(site);
     }
-    let mut bot = Bot::new();
+    world.add_items(map_as_object(&vec_shelf));
+    world.add_items(map_as_object(&vec_site));
+    let bot = Bot::new();
     move_location(bot.clone(), Location::new(MARGIN_L, SHELF_WIDTH + 2, 0));
-    world.add_items(vec_shelf.iter().cloned().map(|obj| obj as Arc<Mutex<Object>>).collect());
     world.add_items(vec![bot.clone()]);
-    (world, vec![bot], vec_shelf, Vec::new())
+    (world, vec![bot], vec_shelf, vec_site)
 }
