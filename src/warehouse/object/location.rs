@@ -36,12 +36,12 @@ impl Location {
     }
     pub fn up(&self) -> Self {
         Self {
-            z: self.z - 1, ..*self
+            z: self.z + 1, ..*self
         }
     }
     pub fn down(&self) -> Self {
         Self {
-            z: self.z + 1, ..*self
+            z: self.z - 1, ..*self
         }
     }
     pub fn render(&self) -> String {

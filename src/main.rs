@@ -1,14 +1,19 @@
 mod warehouse;
 mod worlddata;
 
-use worlddata::one_bot;
+use worlddata::{ Runner, OneRunner };
 
 use std::fs::File;
 use std::io::prelude::*;
 
 fn main() -> std::io::Result<()> {
-    let (world, bots, shelves, sites) = one_bot();
+    let mut runner = OneRunner::new();
     let mut file = File::create("data/data.json")?;
-    file.write_all(world.render().unwrap().as_bytes())?;
+    runner.tick_start(&mut file)?;
+    runner.tick_and_save(&mut file)?;
+    runner.tick_and_save(&mut file)?;
+    runner.tick_and_save(&mut file)?;
+    runner.tick_and_save(&mut file)?;
+    runner.tick_end(&mut file)?;
     Ok(())
 }

@@ -1,5 +1,5 @@
 use warehouse::World;
-use warehouse::object::{ Bot, Shelf, Site, Location, Object };
+use warehouse::object::{ Bot, Shelf, Site, Location };
 use worlddata::util::{ move_location, map_as_object };
 use std::sync::{ Arc, Mutex };
 
@@ -23,13 +23,13 @@ pub fn one_bot() -> (World,
             }
         }
         let mut site = Site::new();
-        move_location(site.clone(), Location::new(cnt * 3 + 1 + MARGIN_L, MARGIN_T + SHELF_WIDTH + 1, 0));
+        move_location(site.clone(), Location::new(cnt * 3 + MARGIN_L + 1, MARGIN_T + SHELF_WIDTH + 1, 0));
         vec_site.push(site);
     }
     world.add_items(map_as_object(&vec_shelf));
     world.add_items(map_as_object(&vec_site));
     let bot = Bot::new();
-    move_location(bot.clone(), Location::new(MARGIN_L, SHELF_WIDTH + 2, 0));
+    move_location(bot.clone(), Location::new(MARGIN_L, SHELF_WIDTH + 3, 0));
     world.add_items(vec![bot.clone()]);
     (world, vec![bot], vec_shelf, vec_site)
 }
