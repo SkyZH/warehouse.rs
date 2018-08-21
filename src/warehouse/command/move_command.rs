@@ -43,7 +43,7 @@ impl Command for BotMoveCommand {
     }
     fn render(&self) -> Result<String, &'static str> {
         let bot = self.bot.lock().unwrap();
-        Ok(format!("{{ type: \"{}\", bot: \"{}\", location: {} }}", 
+        Ok(format!("{{ \"type\": \"{}\", \"bot\": \"{}\", \"location\": {} }}", 
             "move", bot.id(), self.location.render()))
     }
 }

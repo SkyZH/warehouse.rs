@@ -66,7 +66,7 @@ impl Command for TransferCommand {
     fn render(&self) -> Result<String, &'static str> {
         let from = self.from.lock().unwrap();
         let to = self.to.lock().unwrap();
-        Ok(format!("{{ type: \"{}\", from: \"{}\", to: \"{}\" }}", "transfer", from.id(), to.id()))
+        Ok(format!("{{ \"type\": \"{}\", \"from\": \"{}\", \"to\": \"{}\" }}", "transfer", from.id(), to.id()))
     }
 }
 
@@ -164,6 +164,6 @@ mod tests {
         let mut cmd = BotTransferToCommand::new(bot.clone(), obj.clone());
         cmd.initialize().unwrap();
         assert_eq!(cmd.render().unwrap(), 
-            format!("{{ type: \"transfer\", from: \"{}\", to: \"{}\" }}", bot.lock().unwrap().id(), obj.lock().unwrap().id()));
+            format!("{{ \"type\": \"transfer\", \"from\": \"{}\", \"to\": \"{}\" }}", bot.lock().unwrap().id(), obj.lock().unwrap().id()));
     }
 }

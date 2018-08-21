@@ -17,7 +17,7 @@ impl Command for PanicCommand {
         Err("panic command consumed")
     }
     fn render(&self) -> Result<String, &'static str> {
-        Ok("{ type: \"panic\" }".to_owned())
+        Ok("{ \"type\": \"panic\" }".to_owned())
     }
 }
 
@@ -38,7 +38,7 @@ impl Command for ConsumePanicCommand {
         Err("consume panic command consumed")
     }
     fn render(&self) -> Result<String, &'static str> {
-        Ok("{ type: \"panicconsume\" }".to_owned())
+        Ok("{ \"type\": \"panicconsume\" }".to_owned())
     }
 }
 

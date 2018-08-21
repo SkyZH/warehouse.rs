@@ -12,7 +12,7 @@ impl Storage {
     }
     pub fn render(&self) -> Result<String, &'static str> {
         let result = self.items.iter()
-            .map(|set: &ItemSet| format!("{{ item: {}, count: {} }}", set.0, set.1))
+            .map(|set: &ItemSet| format!("{{ \"item\": {}, \"count\": {} }}", set.0, set.1))
             .collect::<Vec<String>>()
             .join(", ");
         Ok(format!("[{}]", result))
@@ -64,7 +64,7 @@ mod tests {
     fn test_render() {
         let mut storage = Storage::new();
         storage.add(1, 1).unwrap();
-        assert_eq!(storage.render().unwrap(), "[{ item: 1, count: 1 }]");
+        assert_eq!(storage.render().unwrap(), "[{ \"item\": 1, \"count\": 1 }]");
     }
 
     #[test]
@@ -72,14 +72,14 @@ mod tests {
         let mut storage = Storage::new();
         storage.add(1, 1).unwrap();
         storage.add(2, 2).unwrap();
-        assert_eq!(storage.render().unwrap(), "[{ item: 1, count: 1 }, { item: 2, count: 2 }]");
+        assert_eq!(storage.render().unwrap(), "[{ \"item\": 1, \"count\": 1 }, { \"item\": 2, \"count\": 2 }]");
     }
     #[test]
     fn test_push_multiple() {
         let mut storage = Storage::new();
         storage.add(1, 1).unwrap();
         storage.add(1, 1).unwrap();
-        assert_eq!(storage.render().unwrap(), "[{ item: 1, count: 2 }]");
+        assert_eq!(storage.render().unwrap(), "[{ \"item\": 1, \"count\": 2 }]");
     }
     #[test]
     #[should_panic(expected="3")]

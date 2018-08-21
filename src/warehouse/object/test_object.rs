@@ -100,6 +100,6 @@ mod tests {
             let location = obj.get_location();
             location.x = 233; location.y = 234; location.z = 235;
         }
-        assert_eq!(obj.render().unwrap(), "{ id: \"test-0\", storage: [{ item: 233, count: 1 }], location: { x: 233, y: 234, z: 235 } }");
+        assert_eq!(obj.render().unwrap(), "{ \"id\": \"test-0\", \"storage\": [{ \"item\": 233, \"count\": 1 }], \"location\": { \"x\": 233, \"y\": 234, \"z\": 235 } }");
     }
 }

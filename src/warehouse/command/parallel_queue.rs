@@ -62,7 +62,7 @@ impl Command for ParallelCommandQueue {
             .join(", ");
         match error_flag {
             Some(err) => Err(err),
-            None => Ok(format!("{{ type: \"parallel_queue\", commands: [{}] }}", result))
+            None => Ok(format!("{{ \"type\": \"parallel_queue\", \"commands\": [{}] }}", result))
         }
     }
 }
@@ -167,6 +167,6 @@ mod tests {
         queue.initialize().unwrap();
         queue.schedule(Box::new(TestNextCommand::new())).unwrap();
         queue.schedule(Box::new(TestNextCommand::new())).unwrap();
-        assert_eq!(queue.render().unwrap(), "{ type: \"parallel_queue\", commands: [{ type: \"testnext\" }, { type: \"testnext\" }] }");
+        assert_eq!(queue.render().unwrap(), "{ \"type\": \"parallel_queue\", \"commands\": [{ \"type\": \"testnext\" }, { \"type\": \"testnext\" }] }");
     }
 }

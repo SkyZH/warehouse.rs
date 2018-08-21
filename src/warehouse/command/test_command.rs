@@ -31,7 +31,7 @@ impl Command for TestCommand {
         Ok(false)
     }
     fn render(&self) -> Result<String, &'static str> {
-        Ok("{ type: \"test\" }".to_owned())
+        Ok("{ \"type\": \"test\" }".to_owned())
     }
 }
 
@@ -52,7 +52,7 @@ impl Command for TestNextCommand {
         Ok(true)
     }
     fn render(&self) -> Result<String, &'static str> {
-        Ok("{ type: \"testnext\" }".to_owned())
+        Ok("{ \"type\": \"testnext\" }".to_owned())
     }
 }
 

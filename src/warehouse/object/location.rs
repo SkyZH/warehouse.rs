@@ -45,7 +45,7 @@ impl Location {
         }
     }
     pub fn render(&self) -> String {
-        format!("{{ x: {}, y: {}, z: {} }}", self.x, self.y, self.z)
+        format!("{{ \"x\": {}, \"y\": {}, \"z\": {} }}", self.x, self.y, self.z)
     }
 }
 
@@ -56,6 +56,6 @@ mod tests {
     #[test]
     fn test_render() {
         let location = Location::new(1, 2, 3);
-        assert_eq!(location.render(), "{ x: 1, y: 2, z: 3 }");
+        assert_eq!(location.render(), "{ \"x\": 1, \"y\": 2, \"z\": 3 }");
     }
 }
