@@ -163,7 +163,7 @@ mod tests {
         let obj = TestObject::new();
         let mut cmd = BotTransferToCommand::new(bot.clone(), obj.clone());
         cmd.initialize().unwrap();
-        assert_eq!(cmd.render().unwrap(), 
+        assert_eq!(cmd.render().unwrap(),
             format!("{{ \"type\": \"transfer\", \"from\": \"{}\", \"to\": \"{}\" }}", bot.lock().unwrap().id(), obj.lock().unwrap().id()));
     }
 }

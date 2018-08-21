@@ -82,6 +82,7 @@ mod tests {
         cmd.initialize().unwrap();
         assert!(!cmd.consume().unwrap());
         assert_eq!(*bot.lock().unwrap().location(), Location::new(0, 0, 1));
+        assert!(!*bot.lock().unwrap().get_lock());
     }
     #[test]
     #[should_panic(expected="target location not available")]

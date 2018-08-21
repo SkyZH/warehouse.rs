@@ -1,5 +1,5 @@
-type Item = u64;
-type ItemSet = (Item, u32);
+pub type Item = u64;
+pub type ItemSet = (Item, u32);
 pub struct Storage {
     pub items: Vec<(Item, u32)>
 }
@@ -36,10 +36,9 @@ impl Storage {
     }
 
     pub fn take(&mut self, item: Item, count: u32) -> Result<(), u32> {
-        let mut result: Result<(), u32> = Err(0);
-        {
+        let result = {
             let mut iter = self.items.iter_mut();
-            result = match iter.find(|&& mut(c_item, _)| c_item == item) {
+            match iter.find(|&& mut(c_item, _)| c_item == item) {
                 Some((_, cnt)) => {
                     if *cnt < count {
                         Err(*cnt)
@@ -50,9 +49,19 @@ impl Storage {
                 },
                 None => Err(0)
             }
-        }
+        };
         self.items.retain(|(_, cnt)| *cnt > 0);
         result
+    }
+
+    pub fn have(&self, item: Item) -> u32 {
+        let mut iter = self.items.iter();
+        match iter.find(|&&(c_item, _)| c_item == item) {
+            Some((_, cnt)) => {
+                *cnt
+            },
+            None => 0
+        }
     }
 }
 
@@ -94,5 +103,12 @@ mod tests {
         storage.add(1, 3).unwrap();
         storage.take(1, 3).unwrap();
         assert_eq!(storage.items.len(), 0);
+    }
+    #[test]
+    fn test_have() {
+        let mut storage = Storage::new();
+        storage.add(1, 2).unwrap();
+        assert_eq!(storage.have(1), 2);
+        assert_eq!(storage.have(2), 0);
     }
 }

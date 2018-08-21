@@ -9,7 +9,8 @@ pub struct Site {
     id: String,
     location: Location,
     locked: bool,
-    storage: Storage
+    storage: Storage,
+    pub pick_storage: Storage
 }
 
 impl Site {
@@ -18,7 +19,8 @@ impl Site {
             id: format!("ste-{}", Uuid::new_v4()),
             location: Location { x: 0, y: 0, z: 0 },
             locked: false,
-            storage: Storage::new()
+            storage: Storage::new(),
+            pick_storage: Storage::new()
         }))
     }
 }
