@@ -44,6 +44,13 @@ impl Object for Site {
     fn get_lock(&mut self) -> &mut bool {
         &mut self.locked
     }
+    fn render(&self) -> Result<String, &'static str> {
+        Ok(format!("{{ \"id\": \"{}\", \"storage\": {}, \"pick_storage\": {}, \"location\": {} }}", 
+                    self.id(),
+                    self.storage().render()?,
+                    self.pick_storage.render()?,
+                    self.location().render()))
+    }
 }
 
 #[cfg(test)]
@@ -56,5 +63,13 @@ mod tests {
         let obj = obj.lock().unwrap();
         assert_eq!(&obj.id()[..4], "ste-");
         Uuid::parse_str(&obj.id()[4..]).unwrap();
+    }
+
+    #[test]
+    fn test_render() {
+        let obj = Site::new();
+        let obj = obj.lock().unwrap();
+        assert_eq!(obj.render().unwrap(), 
+            format!("{{ \"id\": \"{}\", \"storage\": [], \"pick_storage\": [], \"location\": {{ \"x\": 0, \"y\": 0, \"z\": 0 }} }}", obj.id()));
     }
 }

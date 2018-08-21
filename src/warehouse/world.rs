@@ -62,7 +62,7 @@ impl World {
             .join(", ");
         match error_flag {
             Some(err) => Err(err),
-            None => Ok(format!("{{ \"objects\": [{}] }}", result))
+            None => Ok(format!("[{}]", result))
         }
     }
 }
@@ -110,6 +110,6 @@ mod tests {
         let mut world = World::new();
         let bot = Bot::new();
         world.add_items(vec![bot.clone() as Arc<Mutex<Object>>]);
-        assert_eq!(world.render().unwrap(), format!("{{ \"objects\": [{{ \"id\": \"{}\", \"storage\": [], \"location\": {{ \"x\": 0, \"y\": 0, \"z\": 0 }} }}] }}", bot.lock().unwrap().id()));
+        assert_eq!(world.render().unwrap(), format!("[{{ \"id\": \"{}\", \"storage\": [], \"location\": {{ \"x\": 0, \"y\": 0, \"z\": 0 }} }}]", bot.lock().unwrap().id()));
     }
 }

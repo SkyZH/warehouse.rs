@@ -29,12 +29,9 @@ pub trait Object {
         } 
     }
     fn render(&self) -> Result<String, &'static str> {
-        match self.storage().render() {
-            Ok(storage) => Ok(format!("{{ \"id\": \"{}\", \"storage\": {}, \"location\": {} }}", 
-                            self.id(),
-                            storage,
-                            self.location().render())),
-            Err(err) => Err(err)
-        }
+        Ok(format!("{{ \"id\": \"{}\", \"storage\": {}, \"location\": {} }}", 
+                        self.id(),
+                        self.storage().render()?,
+                        self.location().render()))
     }
 }

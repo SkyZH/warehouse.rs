@@ -11,22 +11,26 @@ pub trait Runner {
     fn scheduler(&self) -> Arc<Mutex<Command>>;
     fn world(&self) -> Arc<Mutex<World>>;
     fn task(&mut self) -> Result<(), &'static str>;
-    fn tick(&mut self) -> Result<(), &'static str> {
+    fn tick(&mut self) -> Result<String, &'static str> {
         { self.task()?; }
         let scheduler = self.scheduler();
         let mut scheduler = scheduler.lock().unwrap();
+        let data = scheduler.render().unwrap();
         scheduler.consume()?;
-        Ok(())
+        Ok(data)
     }
     fn tick_start(&mut self, file: &mut File) -> std::io::Result<()> {
         file.write_all(b"{ \"data\": [")
     }
     fn tick_and_save(&mut self, file: &mut File) -> std::io::Result<()> {
-        self.tick().unwrap();
+        let scheduler_data = self.tick().unwrap();
         let world = self.world();
         let world = world.lock().unwrap();
+        file.write_all(b"{ \"objects\": ")?;
         file.write_all(world.render().unwrap().as_bytes())?;
-        file.write_all(b", ")
+        file.write_all(b", \"scheduler\": ")?;
+        file.write_all(scheduler_data.as_bytes())?;
+        file.write_all(b"}, ")
     }
     fn tick_end(&mut self, file: &mut File) -> std::io::Result<()> {
         file.write_all(b"{}]}")
